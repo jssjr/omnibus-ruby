@@ -69,6 +69,17 @@ module Omnibus
                               /s9_preload\.so\.1/,
                              ]
 
+    FREEBSD_WHITELIST_LIBS = [
+                             /libc\.so/,
+                             /libcrypt\.so/,
+                             /libm\.so/,
+                             /librt\.so/,
+                             /libthr\.so/,
+                             /libutil\.so/,
+                             /libz.so/,
+                            ]
+
+
     MAC_WHITELIST_LIBS = [
                           /libobjc\.A\.dylib/,
                           /libSystem\.B\.dylib/,
@@ -182,6 +193,8 @@ module Omnibus
                          MAC_WHITELIST_LIBS
                        when 'solaris2'
                          SOLARIS_WHITELIST_LIBS
+                       when 'freebsd'
+                         FREEBSD_WHITELIST_LIBS
                        else
                          WHITELIST_LIBS
                        end
