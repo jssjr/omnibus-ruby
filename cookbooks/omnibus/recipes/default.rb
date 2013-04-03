@@ -21,6 +21,16 @@
 # gem install fpm ohai --no-rdoc --no-ri
 # ln -s /var/lib/gems/1.8/bin/* /usr/local/bin
 
+execute "update ports tree" do
+  command <<-EOS
+    sed -e 's/\\[ ! -t 0 \\]/false/' /usr/sbin/portsnap > /tmp/portsnap
+    chmod +x /tmp/portsnap
+    /tmp/portsnap fetch extract
+  EOS
+  only_if { node['platform'] == "freebsd" }
+  action :nothing
+end.run_action((node['platform'] == "freebsd") ? :run : :nothing)
+
 # make certain our chef-solo cache dir exists
 directory Chef::Config[:file_cache_path] do
   recursive true
@@ -58,6 +68,7 @@ end
 package_pkgs = value_for_platform_family(
   "debian" => ["dpkg-dev"],
   "rhel" => ["rpm-build"],
+  "freebsd" => ["gmake", "autoconf", "m4"],
   "default" => []
 )
 package_pkgs.each do |pkg|
@@ -107,11 +118,16 @@ else
     not_if "cat /etc/ssh/ssh_config | grep github.com"
     only_if { ::File.exists?("/etc/ssh/ssh_config") }
   end
+
   # Ensure SSH_AUTH_SOCK is honored under sudo
+  sudoers_file = value_for_platform_family(
+    "freebsd" => "/usr/local/etc/sudoers",
+    "default" => "/etc/sudoers"
+  )
   execute "make-sudo-honor-ssh_auth_sock" do
-    command "echo '\nDefaults env_keep+=SSH_AUTH_SOCK' >> /etc/sudoers"
-    not_if "cat /etc/sudoers | grep SSH_AUTH_SOCK"
-    only_if { ::File.exists?("/etc/sudoers") }
+    command "echo '\nDefaults env_keep+=SSH_AUTH_SOCK' >> #{sudoers_file}"
+    not_if "cat #{sudoers_file} | grep SSH_AUTH_SOCK"
+    only_if { ::File.exists?(sudoers_file) }
   end
 
 end
