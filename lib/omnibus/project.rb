@@ -63,6 +63,10 @@ module Omnibus
         platform_version =~ /^(\d+)/
         maj = $1
         "#{build_iteration}.el#{maj}"
+      when 'freebsd'
+        platform_version =~ /^(\d+)/
+        maj = $1
+        "#{build_iteration}.#{platform}.#{maj}.#{machine}"
       when 'windows'
         "#{build_iteration}.windows"
       else
@@ -115,6 +119,10 @@ module Omnibus
       OHAI.platform_family
     end
 
+    def machine
+      OHAI['kernel']['machine']
+    end
+
     def config
       Omnibus.config
     end
@@ -154,10 +162,10 @@ module Omnibus
                      "-nologo",
                      "-ext WixUIExtension",
                      "-cultures:en-us",
-                     "-loc #{install_path}\\msi-tmp\\ChefClient-en-us.wxl",
-                     "#{install_path}\\msi-tmp\\ChefClient-Files.wixobj",
-                     "#{install_path}\\msi-tmp\\ChefClient.wixobj",
-                     "-out #{config.package_dir}\\chef-client-#{build_version}-#{iteration}.msi"]
+                     "-loc #{install_path}\\msi-tmp\\#{package_name}-en-us.wxl",
+                     "#{install_path}\\msi-tmp\\#{package_name}-Files.wixobj",
+                     "#{install_path}\\msi-tmp\\#{package_name}.wixobj",
+                     "-out #{config.package_dir}\\#{package_name}-#{build_version}-#{iteration}.msi"]
 
       # Don't care about the 204 return code from light.exe since it's
       # about some expected warnings...
