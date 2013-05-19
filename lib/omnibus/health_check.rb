@@ -96,6 +96,7 @@ module Omnibus
                           /libutil\.dylib/,
                           /libffi\.dylib/,
                           /libncurses\.5\.4\.dylib/,
+                          /libstdc\+\+\.6\.dylib/,
                           /libiconv/
                          ]
 
