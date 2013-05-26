@@ -87,10 +87,10 @@ module Omnibus
     generate_extra_rake_tasks
   end
 
-  # Processes configurable environment variables.
+  # Set the omnibus software gem
   #
-  # @return [void]
-  def self.process_environment_variables
+  # @return [String]
+  def self.omnibus_software
     @omnibus_software ||= ENV['OMNIBUS_SOFTWARE'] || 'omnibus-software'
   end
 
@@ -140,7 +140,7 @@ module Omnibus
   # @return [Pathname]
   def self.omnibus_software_root
     @omnibus_software_root ||= begin
-      if spec = Gem::Specification.find_all_by_name(@omnibus_software).first
+      if spec = Gem::Specification.find_all_by_name(omnibus_software).first
         Pathname.new(spec.gem_dir)
       else
         nil
