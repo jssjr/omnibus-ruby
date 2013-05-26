@@ -50,9 +50,9 @@ module Omnibus
   # @deprecated Use {#load_configuration} if you need to process a
   #   config file, followed by {#process_configuration} to act upon it.
   def self.configure
+    process_environment_variables
     load_configuration
     process_configuration
-    process_environment_variables
   end
 
   # Convenience method for access to the Omnibus::Config object.
