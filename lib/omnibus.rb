@@ -52,6 +52,7 @@ module Omnibus
   def self.configure
     load_configuration
     process_configuration
+    process_environment_variables
   end
 
   # Convenience method for access to the Omnibus::Config object.
@@ -85,6 +86,14 @@ module Omnibus
     process_dsl_files
     generate_extra_rake_tasks
   end
+
+  # Processes configurable environment variables.
+  #
+  # @return [void]
+  def self.process_environment_variables
+    @omnibus_software ||= ENV['OMNIBUS_SOFTWARE'] || 'omnibus-software'
+  end
+
 
   # All {Omnibus::Project} instances that have been created.
   #
@@ -131,7 +140,7 @@ module Omnibus
   # @return [Pathname]
   def self.omnibus_software_root
     @omnibus_software_root ||= begin
-      if spec = Gem::Specification.find_all_by_name('omnibus-software').first
+      if spec = Gem::Specification.find_all_by_name(@omnibus_software).first
         Pathname.new(spec.gem_dir)
       else
         nil

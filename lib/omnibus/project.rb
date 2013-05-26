@@ -60,6 +60,7 @@ module Omnibus
       @homepage = nil
       @description = nil
       @replaces = nil
+      @stack = 'omnibus-software'
 
       @exclusions = Array.new
       @conflicts = Array.new
